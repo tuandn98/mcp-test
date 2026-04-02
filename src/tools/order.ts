@@ -102,36 +102,27 @@ export const orderTools: ToolDefinition[] = [
         name: 'get_order_book',
         title: 'Get order book',
         description: `Retrieve the current order book from TronSave energy market. 
-        Returns a list of available energy offers sorted by price ascending, 
-        each entry containing the unit price in SUN and the available energy amount at that price. 
-        Use this before placing a buy order to assess market depth and choose an optimal price.`,
+            Returns a list of available energy offers sorted by price ascending, 
+            each entry containing the unit price in SUN and the available energy amount at that price. 
+            Use this before placing a buy order to assess market depth and choose an optimal price.`,
         inputSchema: z.object({
             address: z.string().optional().describe('Receiver resource address'),
-            resourceType: z.enum(["ENERGY", "BANDWIDTH"]).describe('Resource type'),
+            resourceType: z.enum(["ENERGY", "BANDWIDTH"]).optional().describe('Resource type. Default: ENERGY'),
             minDelegateAmount: z.number().optional().describe('Min resource amount delegate'),
             durationSec: z.number().optional().describe('Duration delegate in seconds')
         }),
         handler: safe(async (_input) => {
-            return ok(
-                {
-                    "error": false,
-                    "message": "Success",
-                    "data": [
-                        {
-                            "price": 50,
-                            "availableResourceAmount": 943358
-                        },
-                        {
-                            "price": 51,
-                            "availableResourceAmount": 2963976
-                        },
-                        {
-                            "price": 55,
-                            "availableResourceAmount": 5631938
-                        },
-                    ]
-                }
-            )
+            return ok({
+                "error": false,
+                "message": "Success",
+                "data": [
+                    { "price": 50, "availableResourceAmount": 943358 },
+                    { "price": 51, "availableResourceAmount": 2963976 },
+                    { "price": 55, "availableResourceAmount": 5631938 },
+                    { "price": 60, "availableResourceAmount": 3438832 },
+                    { "price": 90, "availableResourceAmount": 1200000 }
+                ]
+            })
         })
     },
     {
