@@ -203,4 +203,78 @@ export const orderTools: ToolDefinition[] = [
             })
         })
     },
+    {
+        name: 'get_extendable_delegates',
+        title: 'Get extendable delegates',
+        description: `Retrieve all extendable delegates for a receiver address on TronSave. Requires a valid TronSave API key passed in the request header.
+        Step 1 of the extend flow — call this before extend_request. 
+        Returns the extend order book, total delegate amount, estimated TRX payout, 
+        internal balance, and the extendData array ready to pass directly into extend_request.
+        Rate limit: 1 request per second.`,
+        inputSchema: z.object({
+            receiver: z.string().describe('The address that received the resource delegate'),
+            extendTo: z.number().describe('Timestamp in milliseconds to extend the delegation to'),
+            resourceType: z.enum(["ENERGY", "BANDWIDTH"]).optional().describe('Resource type. Default: ENERGY'),
+            maxPriceAccepted: z.number().optional().describe('Maximum price per unit willing to pay for extension (SUN)'),
+            requester: z.string().optional().describe('Requester address. Defaults to the address linked to the API key')
+        }),
+        handler: safe(async (_input) => {
+            return ok({
+                "error": false,
+                "message": "Success",
+                "data": {
+                    "extendOrderBook": [
+                        { "price": 108, "value": 100000 },
+                        { "price": 122, "value": 200000 }
+                    ],
+                    "totalDelegateAmount": 300000,
+                    "totalAvailableExtendAmount": 300000,
+                    "totalEstimateTrx": 24426224,
+                    "isAbleToExtend": true,
+                    "yourBalance": 37780396,
+                    "extendData": [
+                        {
+                            "delegator": "TQBV7xU489Rq8ZCsYi72zBhJM44444444",
+                            "isExtend": true,
+                            "extraAmount": 0,
+                            "extendTo": 1728704969000
+                        },
+                        {
+                            "delegator": "TMN2uTdy6rQYaTm4A5g732kHR333333333",
+                            "isExtend": true,
+                            "extraAmount": 0,
+                            "extendTo": 1728704969000
+                        }
+                    ]
+                }
+            })
+        })
+    },
+    {
+        name: 'extend_request',
+        title: 'Extend request',
+        description: `Submit an extension request for existing delegated resources on TronSave. Requires a valid TronSave API key passed in the request header.
+        Step 2 of the extend flow — must be called after get_extendable_delegates. 
+        Pass the extendData array from get_extendable_delegates response directly into this call. 
+        Returns an orderId on success. Rate limit: 15 requests per second.`,
+        inputSchema: z.object({
+            receiver: z.string().describe('The address that received the resource delegate'),
+            extendData: z.array(z.object({
+                delegator: z.string().describe('Delegator address'),
+                isExtend: z.boolean().describe('Whether to extend this delegation'),
+                extraAmount: z.number().describe('Extra resource amount to add'),
+                extendTo: z.number().describe('Timestamp in milliseconds to extend to')
+            })).describe('Extend data array returned from get_extendable_delegates'),
+            resourceType: z.enum(["ENERGY", "BANDWIDTH"]).optional().describe('Resource type. Default: ENERGY')
+        }),
+        handler: safe(async (_input) => {
+            return ok({
+                "error": false,
+                "message": "Success",
+                "data": {
+                    "orderId": "6819da2d4d1b2aadb0d44eee"
+                }
+            })
+        })
+    },
 ]
