@@ -1,3 +1,5 @@
+import type { CallToolResult, ServerNotification, ServerRequest } from "@modelcontextprotocol/sdk/types.js";
+import type { RequestHandlerExtra } from "@modelcontextprotocol/sdk/shared/protocol.js";
 import { z } from "zod";
 
 /**
@@ -7,13 +9,21 @@ import { z } from "zod";
 export interface ToolDefinition {
   name: string;
   description: string;
-  inputSchema: z.ZodObject<Record<string, z.ZodType>>;
-  handler: (input: Record<string, unknown>) => Promise<any>;
+  inputSchema: z.ZodObject<Record<string, z.ZodTypeAny>>;
+  /**
+   * When `inputSchema` is provided, MCP will call tools with:
+   * `(args, extra) => result`.
+   *
+   * We type this explicitly to avoid MCP's `ToolCallback<any>` union,
+   * which also includes the zero-argument form.
+   */
+  
+  handler: (
+    args: Record<string, unknown>,
+    extra: RequestHandlerExtra<ServerRequest, ServerNotification>,
+  ) => ToolResponse | Promise<ToolResponse>;
 }
-export type ToolResponse ={
-  content: Array<{ type: "text"; text: string }>;
-  isError?: boolean;
-}
+export type ToolResponse = CallToolResult;
 
 /**
  * Shared schemas for common patterns

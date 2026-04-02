@@ -1,6 +1,6 @@
 import { ToolResponse } from "../types"
 
-export function ok(data: unknown): ToolResponse {
+export function ok(data: any): ToolResponse {
   return {
     content: [
       {
@@ -8,6 +8,7 @@ export function ok(data: unknown): ToolResponse {
         text: JSON.stringify(data, null, 2),
       },
     ],
+    structuredContent: data,
     isError: false
   }
 }
@@ -35,8 +36,8 @@ export function err(message: string, details?: unknown): ToolResponse {
 // Wrap handler trong try/catch — dùng khi đăng ký tool
 export function safe<T>(
   handler: (input: T) => Promise<ToolResponse>
-): (input: T) => Promise<ToolResponse> {
-  return async (input: T) => {
+): (input: T, extra: unknown) => Promise<ToolResponse> {
+  return async (input: T, _extra: unknown) => {
     try {
       return await handler(input)
     } catch (e) {
