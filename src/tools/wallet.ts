@@ -10,6 +10,7 @@ const mockWallets = [
 export const walletTools: ToolDefinition[] = [
   {
     name: 'wallet_list',
+    title: 'List wallet',
     description: 'Return the list of all wallets being managed',
     inputSchema: z.object({}),
     handler: safe(async (_input) => {
@@ -22,6 +23,7 @@ export const walletTools: ToolDefinition[] = [
 
   {
     name: 'wallet_create',
+    title: 'Create wallet',
     description: 'Create a new wallet with the given name',
     inputSchema: z.object({
       name: z.string().min(1, 'Wallet name must not be empty'),
@@ -35,17 +37,6 @@ export const walletTools: ToolDefinition[] = [
         createdAt: new Date().toISOString(),
       }
       return ok({ created: true, wallet: newWallet })
-    })
-  },
-  {
-    name: 'env_example',
-    description: 'Create a new wallet with the given name',
-    inputSchema: z.object({
-     
-    }),
-    handler: safe(async (input: any) => {
-     
-      return ok({ created: true, env: process.env })
     })
   },
 ]
