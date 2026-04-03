@@ -117,3 +117,4 @@ test-artifacts/
 .claude/
 .githooks/
 .security-reports/
+test/
