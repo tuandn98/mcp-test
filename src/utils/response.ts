@@ -1,4 +1,4 @@
-import { ToolResponse } from "../types"
+import { ToolResponse } from "../tools/definitions/definition_type"
 
 export function ok(data: any): ToolResponse {
   return {
