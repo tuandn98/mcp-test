@@ -7,26 +7,26 @@ export const internalApiPaths = {
   userInfo: "/v2/user-info",
 
   /** GET — order list (query: page, pageSize) */
-  orderHistory: "__FILL_ORDER_HISTORY__",
+  orderHistory: "/v2/orders",
 
   /**
    * GET — single order; handler appends `/${orderId}`.
    * Example base: `/v2/orders` → final `/v2/orders/{orderId}`
    */
-  orderDetailsBase: "__FILL_ORDER_DETAILS_BASE__",
+  orderDetailsBase: "/v2/order",
 
   /** GET — order book (query params optional) */
-  orderBook: "__FILL_ORDER_BOOK__",
+  orderBook: "/v2/order-book",
 
   /** POST — estimate TRX */
-  estimateTrx: "__FILL_ESTIMATE_TRX__",
+  estimateBuyResource: "/v2/estimate-buy-resource",
 
   /** POST — create order */
-  createOrder: "__FILL_CREATE_ORDER__",
+  createOrder: "/v2/buy-resource",
 
   /** POST — extendable delegates */
-  extendableDelegates: "__FILL_EXTENDABLE_DELEGATES__",
+  extendableDelegates: "/v2/get-extendable-delegates",
 
   /** POST — extend request */
-  extendRequest: "__FILL_EXTEND_REQUEST__",
+  extendRequest: "/v2/extend-request",
 } as const;

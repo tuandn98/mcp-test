@@ -331,18 +331,6 @@ export async function apiFetch<T>(url: string, options: ApiFetchOptions<T>): Pro
           !(cause instanceof ApiFetchError) ||
           (cause instanceof ApiFetchError && cause.status !== undefined && retriesOnStatus.includes(cause.status)));
 
-      logger.error("apiFetch: exception", {
-        requestId,
-        method,
-        url: finalUrl,
-        durationMs,
-        attempt,
-        retries,
-        retryable: shouldRetry,
-        headers: redactHeaders(mergedHeaders),
-        error: cause instanceof Error ? cause.message : cause,
-      });
-
       if (shouldRetry) {
         await sleep(retryDelayMs * 2 ** attempt);
         continue;
