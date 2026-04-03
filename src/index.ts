@@ -3,6 +3,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 
 import { allTools } from './tools'
 import { logger } from './utils/logger'
+import { TOOL_PREFIX } from './utils/constants'
 
 const server = new McpServer({
   name: 'mcp-server',
@@ -10,7 +11,7 @@ const server = new McpServer({
 })
 
 allTools.forEach((tool) => {
-  server.registerTool(tool.name, { title: tool.title, description: tool.description, inputSchema: tool.inputSchema }, tool.handler)
+  server.registerTool(`${TOOL_PREFIX}_${tool.name}`, { title: tool.title, description: tool.description, inputSchema: tool.inputSchema }, tool.handler)
 })
 
 
