@@ -6,10 +6,8 @@ export const orderTools: ToolDefinition[] = [
     {
         name: 'get_order_history',
         title: 'Get internal account order history',
-        description: `Retrieve the order history of the internal account associated with the TronSave API key. Requires a valid TronSave API key passed in the request header.
-        Returns a paginated list of past orders sorted by creation time descending, 
-        including resource amount, price, fulfillment status, payout, and matched delegates. 
-        Rate limit: 15 requests per second.`,
+        description: `Retrieve list of the order history of the internal account associated with the TRONSAVE_API_KEY by page and pageSize. 
+        Sorted by creation time descending, contains fields: resource amount, price, fulfillment status, payout, and matched delegates`,
         inputSchema: z.object({
             page: z.number().optional().describe('Page number, starts from 0. Default: 0'),
             pageSize: z.number().optional().describe('Number of orders per page. Default: 10')
@@ -128,10 +126,8 @@ export const orderTools: ToolDefinition[] = [
     {
         name: 'estimate_trx',
         title: 'Estimate TRX',
-        description: `Estimate the TRX cost before placing a buy order on TronSave. Requires a valid TronSave API key passed in the request header.
-        Accepts resource type, amount, duration, unit price strategy and optional receiver address. 
-        Returns the estimated unit price in SUN, total TRX cost, and available resource amount at that price. 
-        Use this to preview cost and validate budget before calling create_order.`,
+        description: `Estimate the TRX cost before placing a buy order on TronSave. Requires a valid TRONSAVE_API_KEY.
+        Returns the estimated unit price in SUN, total TRX cost, and available resource amount at that price`,
         inputSchema: z.object({
             resourceType: z.enum(["ENERGY", "BANDWIDTH"]).optional().describe('Resource type. Default: ENERGY'),
             resourceAmount: z.number().describe('Amount of resource to buy'),
@@ -143,8 +139,8 @@ export const orderTools: ToolDefinition[] = [
                 z.number()
             ]).optional().describe('Price strategy or exact price in SUN. Default: MEDIUM'),
             options: z.object({
-                allowPartialFill: z.boolean().optional()
-            }).optional()
+                allowPartialFill: z.boolean().optional().describe('Allow partial fill make easier to be fulfilled. Default: true')
+            }).optional().describe('Options for the estimate')
         }),
         handler: safe(async (_input) => {
             return ok({
