@@ -10,7 +10,7 @@ export function initServer() {
 
     // Register tools
     allTools.forEach((tool) => {
-        server.registerTool(`${TOOL_PREFIX}.${tool.name}`, { title: tool.title, description: tool.description, inputSchema: tool.inputSchema }, tool.handler)
+        server.registerTool(`${TOOL_PREFIX}_${tool.name}`, { title: tool.title, description: tool.description, inputSchema: tool.inputSchema }, tool.handler)
     })
     return server
 }

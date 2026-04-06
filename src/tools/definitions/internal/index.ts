@@ -25,7 +25,7 @@ import { createOrderHandler, estimateBuyResourceHandler, extendRequestHandler, g
 
 export const internalTools: ToolDefinition[] = [
     {
-        name: "internal.account.get",
+        name: "internal_account_get",
         title: "Internal Account Information",
         description: withTronSaveAuth(
             "Retrieve the Tronsave account profile linked to the API key: wallet address, TRX balance, and account metadata.",
@@ -36,7 +36,7 @@ export const internalTools: ToolDefinition[] = [
         handler: getInternalAccountHandler
     },
     {
-        name: "internal.order.history",
+        name: "internal_order_history",
         title: "Internal Account Order History",
         description: withTronSaveAuth(
             "List paginated order history for the internal account linked to the API key, sorted by creation time descending.",
@@ -47,7 +47,7 @@ export const internalTools: ToolDefinition[] = [
         handler: getOrderHistoryHandler
     },
     {
-        name: "internal.order.details",
+        name: "internal_order_details",
         title: "Single Order Details",
         description: withTronSaveAuth(
             "Fetch full details for one TronSave order by order ID.",
@@ -60,7 +60,7 @@ export const internalTools: ToolDefinition[] = [
         handler: getOrderDetailsHandler
     },
     {
-        name: "internal.order.book",
+        name: "internal_order_book",
         title: "Energy Market Order Book",
         description: withTronSaveAuth(
             "Return the current TronSave market depth for ENERGY or BANDWIDTH: offers sorted by unit price ascending.",
@@ -71,7 +71,7 @@ export const internalTools: ToolDefinition[] = [
         handler: getOrderBookHandler
     },
     {
-        name: "internal.order.estimate",
+        name: "internal_order_estimate",
         title: "Estimate TRX Cost Before Order",
         description: withTronSaveAuth(
             "Estimate TRX cost for a buy order before submitting it.",
@@ -90,7 +90,7 @@ export const internalTools: ToolDefinition[] = [
         handler: estimateBuyResourceHandler
     },
     {
-        name: "internal.order.create",
+        name: "internal_order_create",
         title: "Create Energy or Bandwidth Order",
         description: withTronSaveAuth(
             "Place a new buy order for ENERGY or BANDWIDTH on TronSave.",
@@ -108,7 +108,7 @@ export const internalTools: ToolDefinition[] = [
         handler: createOrderHandler
     },
     {
-        name: "internal.extend.delegates",
+        name: "internal_extend_delegates",
         title: "List Extendable Delegations",
         description: withTronSaveAuth(
             "Return extendable delegations for a receiver and produce extendData for the extension flow.",
@@ -125,7 +125,7 @@ export const internalTools: ToolDefinition[] = [
         handler: getExtendableDelegatesHandler
     },
     {
-        name: "internal.extend.request",
+        name: "internal_extend_request",
         title: "Submit Delegation Extension",
         description: withTronSaveAuth(
             "Submit an extension request for existing delegated resources on TronSave.",
