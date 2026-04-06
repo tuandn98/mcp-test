@@ -1,16 +1,31 @@
 import { ToolResponse } from "../tools/definitions/definition_type"
 
-export function ok(data: any): ToolResponse {
+/**
+ * MCP `CallToolResult.structuredContent` must be a JSON **object** (record of string keys).
+ * Zod validates it as `z.record(z.string(), z.unknown())` — a top-level **array** fails with
+ * "expected record, received array". Primitives and `null` are also invalid as the root value.
+ *
+ * We keep the human-readable `content[0].text` as the raw JSON of `data`, and only normalize
+ * the machine-readable `structuredContent` shape here.
+ */
+function toStructuredContentRecord(data: unknown): Record<string, unknown> {
+  if (data !== null && typeof data === "object" && !Array.isArray(data)) {
+    return data as Record<string, unknown>;
+  }
+  return { data };
+}
+
+export function ok(data: unknown): ToolResponse {
   return {
     content: [
       {
-        type: 'text',
+        type: "text",
         text: JSON.stringify(data, null, 2),
       },
     ],
-    structuredContent: data,
-    isError: false
-  }
+    structuredContent: toStructuredContentRecord(data),
+    isError: false,
+  };
 }
 
 export function err(message: string, details?: unknown): ToolResponse {

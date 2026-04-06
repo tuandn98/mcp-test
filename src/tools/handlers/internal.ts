@@ -25,9 +25,7 @@ export const getOrderDetailsHandler = safe(async (input: Record<string, any>) =>
 export const getOrderBookHandler = safe(async (input: Record<string, any>) => {
     return fetchApiInternal(internalApiPaths.orderBook, {
         method: "GET",
-        query: {
-            ...input
-        },
+        query: { ...input },
     });
 });
 

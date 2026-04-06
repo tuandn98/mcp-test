@@ -151,17 +151,6 @@ function buildUrlWithQuery(
   return u.toString();
 }
 
-function redactHeaders(headers: Record<string, string>): Record<string, string> {
-  // Redact sensitive headers before logging.
-  const redactKeys = new Set(["authorization", "x-api-key", "api-key", "cookie"]);
-  const out: Record<string, string> = {};
-  for (const [k, v] of Object.entries(headers)) {
-    if (redactKeys.has(k.toLowerCase())) out[k] = "***REDACTED***";
-    else out[k] = v;
-  }
-  return out;
-}
-
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -283,19 +272,6 @@ export async function apiFetch<T>(url: string, options: ApiFetchOptions<T>): Pro
           requestId,
           responseBody: responseText,
         });
-
-        logger.error("apiFetch: request failed", {
-          requestId,
-          method,
-          url: finalUrl,
-          status,
-          durationMs,
-          attempt,
-          retries,
-          retryable: isRetryable,
-          headers: redactHeaders(mergedHeaders),
-        });
-
         if (isRetryable) {
           await sleep(retryDelayMs * 2 ** attempt);
           continue;
@@ -371,7 +347,7 @@ export interface ApiFetchEnvelopeOptions<T> extends Omit<ApiFetchOptions<ApiEnve
  * Fetch an API response in the shape:
  * `{ error: boolean, message: string, data: T }`.
  */
-export async function apiFetchEnvelope<T>(
+async function apiFetchEnvelope<T>(
   url: string,
   options: ApiFetchEnvelopeOptions<T> = {},
 ): Promise<ApiEnvelope<T>> {
@@ -410,7 +386,7 @@ export async function apiFetchData<T>(
   return envelope.data;
 }
 
-export interface ApiClientDefaults {
+interface ApiClientDefaults {
   /**
    * Fixed API endpoint, for example `https://api.example.com/v1`.
    */
