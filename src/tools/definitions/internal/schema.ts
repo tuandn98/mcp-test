@@ -166,3 +166,90 @@ export const orderIdParam = z
     .describe(
         "TronSave order ID (hex string), e.g. value returned in internal.order.create response data.orderId."
     );
+
+
+/** ----- Output Schema ----- */
+
+export const getInternalAccountOutputSchema = z.object({
+    id: z.string(),
+    balance: z.string().describe("Amount in SUN"),
+    representAddress: z.string().describe("TRON base58 represent address"),
+    depositAddress: z.string().describe("TRON base58 deposit address")
+})
+export const internalOrderOutputSchema = z.object({
+    id: z.string().describe("TronSave order ID (hex string)"),
+    requester: z.string().describe("TRON base58 address requester buy resource"),
+    receiver: z.string().describe("TRON base58 address receive the resource "),
+    resourceAmount: z.number().describe("Resource amount of order"),
+    resourceType: z.enum(["ENERGY", "BANDWIDTH"]).describe("Resource type"),
+    remainAmount: z.number().describe("Remain amount of order"),
+    orderType: z.enum(["NORMAL", "FAST", "EXTEND"]).describe("Type of order"),
+    price: z.number().describe("Unit price in SUN"),
+    durationSec: z.number().describe("Delegated duration in seconds"),
+    status: z.enum(["Active", "Completed"]).optional().describe("Status of order"),
+    allowPartialFill: z.boolean().describe("Allow partial fill"),
+    payoutAmount: z.number(),
+    fulfilledPercent: z.number(),
+    smartMatching: z.object({
+        autoBuyMoreMaximumDurationPercent: z.number()
+            .describe("Maximum duration percent for auto buy more"),
+        totalSmartMatchingOrderCount: z.number().optional()
+            .describe("Total number of smart matching orders"),
+        totalSmartMatchingOrderAmount: z.number().optional()
+            .describe("Total amount of smart matching orders"),
+        totalRefundSmartMatchingAmount: z.number().optional()
+            .describe("Total refunded amount from smart matching"),
+    }).nullable()
+        .describe("Smart matching config, enabled for orders >= 10M resource"),
+
+    createdAt: z.iso.datetime().describe("Order created time"),
+    delegates: z.array(
+        z.object({
+            delegator: z.string().describe("TRON base58 address of delegator"),
+            amount: z.number().describe("Delegated resource amount"),
+            txid: z.string().describe("Transaction ID on TRON network"),
+            extendInfo: z.unknown().nullable().describe("Extend delegation info"),
+            smartMatchingInfo: z.unknown().nullable().describe("Smart matching info"),
+        })
+    ).describe("List of delegations fulfilling this order"),
+})
+export const getOrderBookOutputSchema = z.object({
+    data: z.array(
+        z.object({
+            price: z.number().describe("Price in SUN"),
+            availableResourceAmount: z.number().describe("Available resource amount at this price level"),
+        })
+    ).describe("Order book entries sorted by price"),
+});
+export const estimateOrderOutputSchema = z.object({
+    unitPrice: z.number().describe("Unit price in SUN"),
+    durationSec: z.number().describe("Delegated duration in seconds"),
+    estimateTrx: z.number().describe("Estimated TRX cost in SUN"),
+    availableResource: z.number().describe("Available resource amount"),
+});
+export const buyResourceOutputSchema = z.object({
+    orderId: z.string().describe("TronSave order ID (hex string)")
+})
+export const extendDelegatesOutputSchema = z.object({
+    extendOrderBook: z.array(
+        z.object({
+            price: z.number().describe("Price in SUN"),
+            availableResourceAmount: z.number().describe("Available resource amount at this price level"),
+        })
+    ).describe("Order book for extend"),
+
+    totalDelegateAmount: z.number().describe("Total delegated resource amount"),
+    totalAvailableExtendAmount: z.number().describe("Total available amount to extend"),
+    totalEstimateTrx: z.number().describe("Total estimated TRX cost in SUN"),
+    isAbleToExtend: z.boolean().describe("Whether balance is sufficient to extend"),
+    yourBalance: z.number().describe("Current account balance in SUN"),
+
+    extendData: z.array(
+        z.object({
+            delegator: z.string().describe("TRON base58 address of delegator"),
+            isExtend: z.boolean().describe("Whether this delegation will be extended"),
+            extraAmount: z.number().describe("Extra resource amount needed for extension"),
+            extendTo: z.number().describe("New expiration timestamp after extension"),
+        })
+    ).nullable().describe("List of delegations to extend"),
+});

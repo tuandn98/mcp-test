@@ -1,10 +1,15 @@
 import z from "zod";
 import { ToolDefinition } from "../definition_type";
-import { ok, safe } from "../../../utils/response";
 import {
+    buyResourceOutputSchema,
     durationSecOptional,
+    estimateOrderOutputSchema,
     extendDataRowSchema,
+    extendDelegatesOutputSchema,
     extendToMsRequired,
+    getInternalAccountOutputSchema,
+    getOrderBookOutputSchema,
+    internalOrderOutputSchema,
     maxPriceAcceptedOptional,
     orderBookFields,
     orderCreateOptions,
@@ -33,6 +38,7 @@ export const internalTools: ToolDefinition[] = [
             "Read-only; does not submit orders or change chain state."
         ),
         inputSchema: EmptyInputSchema,
+        outputSchema: getInternalAccountOutputSchema,
         handler: getInternalAccountHandler
     },
     {
@@ -44,6 +50,10 @@ export const internalTools: ToolDefinition[] = [
             "Read-only."
         ),
         inputSchema: z.object({ ...paginationFields }),
+        outputSchema: z.object({
+            data: z.array(internalOrderOutputSchema),
+            total: z.number()
+        }),
         handler: getOrderHistoryHandler
     },
     {
@@ -57,6 +67,7 @@ export const internalTools: ToolDefinition[] = [
         inputSchema: z.object({
             orderId: orderIdParam,
         }),
+        outputSchema: internalOrderOutputSchema,
         handler: getOrderDetailsHandler
     },
     {
@@ -68,6 +79,7 @@ export const internalTools: ToolDefinition[] = [
             "Read-only."
         ),
         inputSchema: z.object({ ...orderBookFields }),
+        outputSchema: getOrderBookOutputSchema,
         handler: getOrderBookHandler
     },
     {
@@ -87,6 +99,7 @@ export const internalTools: ToolDefinition[] = [
             unitPrice: unitPriceOptional,
             options: orderEstimateOptions,
         }),
+        outputSchema: estimateOrderOutputSchema,
         handler: estimateBuyResourceHandler
     },
     {
@@ -105,6 +118,7 @@ export const internalTools: ToolDefinition[] = [
             sponsor: z.string().optional().describe("Optional sponsor or referral code."),
             options: orderCreateOptions,
         }),
+        outputSchema: buyResourceOutputSchema,
         handler: createOrderHandler
     },
     {
@@ -122,6 +136,7 @@ export const internalTools: ToolDefinition[] = [
             maxPriceAccepted: maxPriceAcceptedOptional,
             requester: requesterOptional,
         }),
+        outputSchema: buyResourceOutputSchema,
         handler: getExtendableDelegatesHandler
     },
     {
@@ -140,6 +155,7 @@ export const internalTools: ToolDefinition[] = [
                 .describe("Rows copied from data.extendData returned by internal.extend.delegates."),
             resourceType: resourceTypeOptional,
         }),
+        outputSchema: extendDelegatesOutputSchema,
         handler: extendRequestHandler
     },
 ]

@@ -14,16 +14,33 @@ function toStructuredContentRecord(data: unknown): Record<string, unknown> {
   }
   return { data };
 }
-
+const TIMESTAMP_FIELDS = new Set(["createdAt", "updatedAt"]);
+function transformTimestamps(data: unknown): unknown {
+  if (Array.isArray(data)) {
+    return data.map(transformTimestamps);
+  }
+  if (data !== null && typeof data === "object") {
+    return Object.fromEntries(
+      Object.entries(data as Record<string, unknown>).map(([key, value]) => {
+        if (TIMESTAMP_FIELDS.has(key) && typeof value === "number") {
+          return [key, new Date(value * 1000).toISOString()];
+        }
+        return [key, transformTimestamps(value)];
+      })
+    );
+  }
+  return data;
+}
 export function ok(data: unknown): ToolResponse {
+  const transformed = transformTimestamps(data);
   return {
     content: [
       {
         type: "text",
-        text: JSON.stringify(data, null, 2),
+        text: JSON.stringify(transformed, null, 2),
       },
     ],
-    structuredContent: toStructuredContentRecord(data),
+    structuredContent: toStructuredContentRecord(transformed),
     isError: false,
   };
 }
