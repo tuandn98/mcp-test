@@ -4,6 +4,7 @@ import {
   getEffectiveNetworkPreference,
   getSessionRuntime,
   getSessionStore,
+  maskStorageKeyForDisplay,
 } from "../../session";
 import { err, ok, safe } from "../../utils/response";
 import type { SessionConfigureInput } from "../definitions/session/schema";
@@ -48,7 +49,8 @@ export const sessionGetHandler = safe(async () => {
   const networkSource = stored.network ? "session" : "environment";
 
   return ok({
-    sessionId: rt.sessionId,
+    sessionBucketPreview: maskStorageKeyForDisplay(rt.sessionId),
+    isolationSource: rt.isolationSource,
     apiKeySource,
     apiKeyConfigured: Boolean(effective),
     apiKeyPreview: maskApiKey(effective),
@@ -94,7 +96,7 @@ export const sessionConfigureHandler = safe(async (input: SessionConfigureInput)
 
   if (!applied.apiKey && !applied.clearApiKey && !applied.network) {
     return ok({
-      sessionId: rt.sessionId,
+      sessionBucketPreview: maskStorageKeyForDisplay(rt.sessionId),
       message: "No changes supplied.",
       applied,
     });
@@ -103,8 +105,8 @@ export const sessionConfigureHandler = safe(async (input: SessionConfigureInput)
   getSessionStore().patch(rt.sessionId, patch);
 
   return ok({
-    sessionId: rt.sessionId,
-    message: "Session updated. Credentials apply to subsequent TronSave tool calls in this MCP session.",
+    sessionBucketPreview: maskStorageKeyForDisplay(rt.sessionId),
+    message: "Session updated. Credentials apply to subsequent TronSave tool calls in this isolated bucket only.",
     applied,
   });
 });

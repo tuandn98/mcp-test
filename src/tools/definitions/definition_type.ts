@@ -1,7 +1,6 @@
 import type { CallToolResult, ServerNotification, ServerRequest } from "@modelcontextprotocol/sdk/types.js";
 import type { RequestHandlerExtra } from "@modelcontextprotocol/sdk/shared/protocol.js";
 import { z } from "zod";
-import { AnySchema } from "@modelcontextprotocol/sdk/server/zod-compat";
 
 /**
  * Tool definition interface

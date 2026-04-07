@@ -1,17 +1,14 @@
 import { AsyncLocalStorage } from "node:async_hooks";
-import type { ServerNotification, ServerRequest } from "@modelcontextprotocol/sdk/types.js";
-import type { RequestHandlerExtra } from "@modelcontextprotocol/sdk/shared/protocol.js";
+import type { IsolationSource, ResolvedIsolation } from "./isolation";
 import type { SessionData, SessionStore } from "./types";
 
-/** Key used when the transport does not provide `extra.sessionId` (typical for stdio). */
-export const DEFAULT_STDIO_SESSION_KEY = "__stdio__";
-
 /**
- * Per-request context: which session this tool call belongs to and the snapshot of DB at request entry.
- * Handlers that mutate the store (e.g. `session_configure`) update persistence; the ALS snapshot updates on the next request.
+ * Per-request context: isolated storage bucket + snapshot at request entry.
+ * `sessionId` is the **storage key** into SessionStore (historical name); prefer `maskStorageKeyForDisplay` for logs/UI.
  */
 export interface SessionRuntimeContext {
   sessionId: string;
+  isolationSource: IsolationSource;
   data: SessionData;
 }
 
@@ -22,15 +19,12 @@ export function getSessionRuntime(): SessionRuntimeContext | undefined {
 }
 
 /**
- * Loads persisted session for this MCP request and runs `fn` with ALS populated.
- * Must wrap every tool invocation from {@link server.ts} so `fetchApiInternal` can resolve API key/network.
+ * Loads persisted session for the resolved isolation bucket and runs `fn` with ALS populated.
+ * Call after {@link enforceIsolationIfConfigured} from {@link server.ts}.
  */
-export function runWithSession<R>(
-  extra: RequestHandlerExtra<ServerRequest, ServerNotification>,
-  store: SessionStore,
-  fn: () => R | Promise<R>,
-): Promise<R> {
-  const sessionId = extra.sessionId?.trim() || DEFAULT_STDIO_SESSION_KEY;
-  const data = store.get(sessionId);
-  return Promise.resolve(sessionAls.run({ sessionId, data }, fn));
+export function runWithSession<R>(store: SessionStore, isolation: ResolvedIsolation, fn: () => R | Promise<R>): Promise<R> {
+  const data = store.get(isolation.storageKey);
+  return Promise.resolve(
+    sessionAls.run({ sessionId: isolation.storageKey, isolationSource: isolation.source, data }, fn),
+  );
 }

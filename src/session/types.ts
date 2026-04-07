@@ -1,4 +1,10 @@
 /**
+ * Storage key when MCP transport does not expose `sessionId` (typical stdio): **one shared bucket per process**.
+ * Unsafe for multi-tenant HTTP unless every user has a distinct process or you use tenant-bound storage keys.
+ */
+export const DEFAULT_STDIO_SESSION_KEY = "__stdio__";
+
+/**
  * TronSave API host selection for this MCP client/session.
  * - `mainnet`: https://api.tronsave.io
  * - `dev`: https://api-dev.tronsave.io
@@ -6,8 +12,7 @@
 export type TronSaveNetworkPreference = "mainnet" | "dev";
 
 /**
- * Persisted fields for one MCP logical session (HTTP transport may send `mcp-session-id`;
- * stdio uses a single implicit id — see {@link DEFAULT_STDIO_SESSION_KEY}).
+ * Persisted fields for one isolated storage bucket (see `resolveIsolation` / `MCP_TENANT_HEADER` / OAuth).
  */
 export interface SessionData {
   /** Overrides process.env.TRONSAVE_API_KEY for this session when non-empty. */

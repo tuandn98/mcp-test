@@ -1,4 +1,12 @@
-export { DEFAULT_STDIO_SESSION_KEY, getSessionRuntime, runWithSession, type SessionRuntimeContext } from "./context";
+export { DEFAULT_STDIO_SESSION_KEY } from "./types";
+export {
+  enforceIsolationIfConfigured,
+  maskStorageKeyForDisplay,
+  resolveIsolation,
+  type IsolationSource,
+  type ResolvedIsolation,
+} from "./isolation";
+export { getSessionRuntime, runWithSession, type SessionRuntimeContext } from "./context";
 export {
   getEffectiveApiKey,
   getEffectiveBaseUrl,

@@ -1,9 +1,10 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import type { ServerNotification, ServerRequest } from '@modelcontextprotocol/sdk/types.js'
 import type { RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js'
-import { getSessionStore, runWithSession } from './session'
+import { enforceIsolationIfConfigured, getSessionStore, runWithSession } from './session'
 import { allTools } from './tools'
 import { TOOL_PREFIX } from './utils/constants'
+import { err } from './utils/response'
 
 export function initServer() {
     const server = new McpServer({
@@ -19,7 +20,11 @@ export function initServer() {
             `${TOOL_PREFIX}_${tool.name}`,
             { title: tool.title, description: tool.description, inputSchema: tool.inputSchema, outputSchema: tool.outputSchema },
             async (args, extra: RequestHandlerExtra<ServerRequest, ServerNotification>) => {
-                return runWithSession(extra, store, () => tool.handler(args, extra))
+                const gate = enforceIsolationIfConfigured(extra)
+                if (!gate.ok) {
+                    return err(gate.error)
+                }
+                return runWithSession(store, gate.isolation, () => tool.handler(args, extra))
             },
         )
     })

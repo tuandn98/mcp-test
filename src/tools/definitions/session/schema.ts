@@ -29,8 +29,20 @@ export const sessionConfigureInputSchema = z.object({
 
 export type SessionConfigureInput = z.infer<typeof sessionConfigureInputSchema>;
 
+export const isolationSourceSchema = z.enum([
+  "validated_oauth_token",
+  "tenant_header",
+  "mcp_transport_session",
+  "stdio_default",
+]);
+
 export const sessionGetOutputSchema = z.object({
-  sessionId: z.string().describe("MCP session id from transport, or default stdio key."),
+  sessionBucketPreview: z
+    .string()
+    .describe("Masked storage bucket id — safe to show; never exposes raw tenant token or full session key."),
+  isolationSource: isolationSourceSchema.describe(
+    "How the server chose the bucket: OAuth token, tenant header, MCP transport session id, or stdio shared process bucket.",
+  ),
   apiKeySource: z.enum(["session", "environment", "none"]).describe("Where the effective API key comes from."),
   apiKeyConfigured: z.boolean().describe("Whether any effective API key is available for TronSave calls."),
   apiKeyPreview: z.string().nullable().describe("Masked preview of effective key, or null."),
@@ -39,7 +51,7 @@ export const sessionGetOutputSchema = z.object({
 });
 
 export const sessionConfigureOutputSchema = z.object({
-  sessionId: z.string(),
+  sessionBucketPreview: z.string().describe("Masked bucket affected by this configure call."),
   message: z.string(),
   /** Which logical fields were applied (not necessarily changed). */
   applied: z.object({

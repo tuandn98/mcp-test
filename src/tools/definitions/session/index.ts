@@ -16,7 +16,7 @@ export const sessionTools: ToolDefinition[] = [
     name: "session_get",
     title: "Session — read MCP session and credential source",
     description:
-      "Shows the active MCP session id (from transport or stdio default), whether a TronSave API key is available, masked key preview, and effective API cluster (mainnet vs dev). Read-only; safe to call without TRONSAVE_API_KEY. Use to verify client configuration before calling internal tools.",
+      "Shows masked session bucket id, isolation source (OAuth vs tenant header vs transport vs stdio-shared), whether a TronSave API key is available, masked key preview, and effective API cluster. Read-only; safe without TRONSAVE_API_KEY. For multi-tenant HTTP set MCP_REQUIRE_ISOLATION and MCP_TENANT_HEADER or MCP OAuth so users cannot share buckets.",
     inputSchema: EmptyInputSchema,
     outputSchema: sessionGetOutputSchema,
     handler: sessionGetHandler,
@@ -25,7 +25,7 @@ export const sessionTools: ToolDefinition[] = [
     name: "session_configure",
     title: "Session — set API key or network for this MCP session",
     description:
-      "Stores TronSave API key and/or network (mainnet vs dev) in memory for the current MCP session. Overrides process env for subsequent internal TronSave tools until cleared. session scope: HTTP transports use mcp-session-id; stdio uses a single process-wide default id. Keys are never echoed back in full. Clearing apiKey falls back to TRONSAVE_API_KEY.",
+      "Stores TronSave API key and/or network in the **isolated bucket** for this request (OAuth token, MCP_TENANT_HEADER value, mcp-session-id, or stdio-shared). Overrides env for subsequent calls in that bucket only. Keys are never echoed in full. For HTTP multi-tenant, require MCP_REQUIRE_ISOLATION + per-user header or validated OAuth.",
     inputSchema: sessionConfigureInputSchema,
     outputSchema: sessionConfigureOutputSchema,
     handler: sessionConfigureHandler,
