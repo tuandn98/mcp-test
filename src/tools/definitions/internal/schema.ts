@@ -191,17 +191,11 @@ export const internalOrderOutputSchema = z.object({
     payoutAmount: z.number(),
     fulfilledPercent: z.number(),
     smartMatching: z.object({
-        autoBuyMoreMaximumDurationPercent: z.number()
-            .describe("Maximum duration percent for auto buy more"),
-        totalSmartMatchingOrderCount: z.number().optional()
-            .describe("Total number of smart matching orders"),
-        totalSmartMatchingOrderAmount: z.number().optional()
-            .describe("Total amount of smart matching orders"),
-        totalRefundSmartMatchingAmount: z.number().optional()
-            .describe("Total refunded amount from smart matching"),
-    }).nullable()
-        .describe("Smart matching config, enabled for orders >= 10M resource"),
-
+        autoBuyMoreMaximumDurationPercent: z.number().describe("Maximum duration percent for auto buy more"),
+        totalSmartMatchingOrderCount: z.number().optional().describe("Total number of smart matching orders"),
+        totalSmartMatchingOrderAmount: z.number().optional().describe("Total amount of smart matching orders"),
+        totalRefundSmartMatchingAmount: z.number().optional().describe("Total refunded amount from smart matching"),
+    }).nullable().describe("Smart matching config, enabled for orders >= 10M resource"),
     createdAt: z.iso.datetime().describe("Order created time"),
     delegates: z.array(
         z.object({
@@ -212,14 +206,26 @@ export const internalOrderOutputSchema = z.object({
             smartMatchingInfo: z.unknown().nullable().describe("Smart matching info"),
         })
     ).describe("List of delegations fulfilling this order"),
-})
+});
+
+/**
+ * One row of market depth: unit price and liquidity at that level.
+ * Shared by `getOrderBookOutputSchema` and `extendDelegatesOutputSchema.extendOrderBook`
+ * so TronSave list endpoints stay consistent in MCP output typing.
+ */
+export const orderBookLevelSchema = z.object({
+    price: z.number().describe("Price in SUN"),
+    availableResourceAmount: z.number().describe("Available resource amount at this price level"),
+});
+
 export const getOrderBookOutputSchema = z.object({
-    data: z.array(
-        z.object({
-            price: z.number().describe("Price in SUN"),
-            availableResourceAmount: z.number().describe("Available resource amount at this price level"),
-        })
-    ).describe("Order book entries sorted by price"),
+    data: z.array(orderBookLevelSchema).describe("Order book entries sorted by price"),
+});
+
+/** Paginated `GET /v2/orders` response body shape (`data` + `total`). */
+export const internalOrderListOutputSchema = z.object({
+    data: z.array(internalOrderOutputSchema).describe("Orders on this page, newest first."),
+    total: z.number().describe("Total orders matching the query (for pagination)."),
 });
 export const estimateOrderOutputSchema = z.object({
     unitPrice: z.number().describe("Unit price in SUN"),
@@ -229,27 +235,21 @@ export const estimateOrderOutputSchema = z.object({
 });
 export const buyResourceOutputSchema = z.object({
     orderId: z.string().describe("TronSave order ID (hex string)")
-})
-export const extendDelegatesOutputSchema = z.object({
-    extendOrderBook: z.array(
-        z.object({
-            price: z.number().describe("Price in SUN"),
-            availableResourceAmount: z.number().describe("Available resource amount at this price level"),
-        })
-    ).describe("Order book for extend"),
+});
 
+/**
+ * Preview payload from `POST /v2/get-extendable-delegates`: book, totals, and rows to pass to extend.request.
+ * `extendData` matches {@link extendDataRowSchema} so the same shape can be echoed into `internal_extend_request`.
+ */
+export const extendDelegatesOutputSchema = z.object({
+    extendOrderBook: z.array(orderBookLevelSchema).describe("Order book for extend"),
     totalDelegateAmount: z.number().describe("Total delegated resource amount"),
     totalAvailableExtendAmount: z.number().describe("Total available amount to extend"),
     totalEstimateTrx: z.number().describe("Total estimated TRX cost in SUN"),
     isAbleToExtend: z.boolean().describe("Whether balance is sufficient to extend"),
     yourBalance: z.number().describe("Current account balance in SUN"),
-
-    extendData: z.array(
-        z.object({
-            delegator: z.string().describe("TRON base58 address of delegator"),
-            isExtend: z.boolean().describe("Whether this delegation will be extended"),
-            extraAmount: z.number().describe("Extra resource amount needed for extension"),
-            extendTo: z.number().describe("New expiration timestamp after extension"),
-        })
-    ).nullable().describe("List of delegations to extend"),
+    extendData: z
+        .array(extendDataRowSchema)
+        .nullable()
+        .describe("Delegations to extend; pass unchanged into internal.extend.request extendData."),
 });
