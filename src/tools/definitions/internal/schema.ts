@@ -174,7 +174,7 @@ export const getInternalAccountOutputSchema = z.object({
     id: z.string(),
     balance: z.string().describe("Amount in SUN"),
     representAddress: z.string().describe("TRON base58 represent address"),
-    depositAddress: z.string().describe("TRON base58 deposit address")
+    depositAddress: z.string().describe("TRON base58 deposit address, used for deposit TRX to TronSave internal account")
 })
 export const internalOrderOutputSchema = z.object({
     id: z.string().describe("TronSave order ID (hex string)"),
