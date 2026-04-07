@@ -9,6 +9,7 @@ import {
     extendToMsRequired,
     getInternalAccountOutputSchema,
     getOrderBookOutputSchema,
+    internalOrderListOutputSchema,
     internalOrderOutputSchema,
     maxPriceAcceptedOptional,
     orderBookFields,
@@ -50,10 +51,7 @@ export const internalTools: ToolDefinition[] = [
             "Read-only."
         ),
         inputSchema: z.object({ ...paginationFields }),
-        outputSchema: z.object({
-            data: z.array(internalOrderOutputSchema),
-            total: z.number()
-        }),
+        outputSchema: internalOrderListOutputSchema,
         handler: getOrderHistoryHandler
     },
     {
@@ -136,7 +134,7 @@ export const internalTools: ToolDefinition[] = [
             maxPriceAccepted: maxPriceAcceptedOptional,
             requester: requesterOptional,
         }),
-        outputSchema: buyResourceOutputSchema,
+        outputSchema: extendDelegatesOutputSchema,
         handler: getExtendableDelegatesHandler
     },
     {
@@ -155,7 +153,8 @@ export const internalTools: ToolDefinition[] = [
                 .describe("Rows copied from data.extendData returned by internal.extend.delegates."),
             resourceType: resourceTypeOptional,
         }),
-        outputSchema: extendDelegatesOutputSchema,
+        /** Same contract as `internal.order.create`: new extension order id from `POST /v2/extend-request`. */
+        outputSchema: buyResourceOutputSchema,
         handler: extendRequestHandler
     },
 ]
