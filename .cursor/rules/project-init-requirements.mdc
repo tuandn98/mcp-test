@@ -1,8 +1,7 @@
 ---
 description: Enforce minimum repo structure at initialization (docs/, tasks/, CHANGELOG.md) and link to the governing standards (English).
-alwaysApply: true
+alwaysApply: false
 ---
-
 # Project Initialization Requirements (Repo Baseline)
 
 When initializing this repository (or when bootstrapping a fresh clone), ensure the baseline structure exists:

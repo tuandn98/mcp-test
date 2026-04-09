@@ -41,9 +41,9 @@ This folder holds **domain-driven** documentation for **tronsave-mcp-server**. U
 
 | Document | Purpose |
 |----------|---------|
-| [testing/strategy/unit-testing.md](./testing/strategy/unit-testing.md) | Unit test scope and future conventions |
-| [testing/strategy/integration-testing.md](./testing/strategy/integration-testing.md) | Integration test scope and future conventions |
-| [testing/strategy/e2e-testing.md](./testing/strategy/e2e-testing.md) | End-to-end test scope and future conventions |
+| [testing/strategy/unit-testing.md](./testing/strategy/unit-testing.md) | Unit test scope and how to run them (Vitest) |
+| [testing/strategy/integration-testing.md](./testing/strategy/integration-testing.md) | Integration test scope and how to run them (Vitest) |
+| [testing/strategy/e2e-testing.md](./testing/strategy/e2e-testing.md) | End-to-end test scope and how to run them (Vitest + stdio spawn) |
 | [testing/test-plans/README.md](./testing/test-plans/README.md) | Where feature-specific plans live |
 
 ## Principles

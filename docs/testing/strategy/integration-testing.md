@@ -6,9 +6,15 @@ Integration tests should verify **wiring between layers**: MCP tool registration
 
 ## Current state
 
-No dedicated integration test suite is wired in the repository yet. This file defines the **intended** scope for when it is added.
+Integration tests are implemented using **Vitest** and live under `tests/integration/`.
 
-## Conventions (when implemented)
+Run them with:
+
+```bash
+npm test
+```
+
+## Conventions
 
 - Avoid depending on secret API keys in CI; use test doubles or recorded responses where appropriate.
 - If TronSave offers a stable sandbox, document credentials and constraints in this file or in CI configuration (without committing secrets).

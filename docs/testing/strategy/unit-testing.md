@@ -6,9 +6,15 @@ Unit tests should validate **pure logic** and **small modules in isolation**: Zo
 
 ## Current state
 
-The repository does not yet include an automated unit test runner (for example Jest or Vitest) in `package.json`. Treat this document as the **intended** direction when tests are introduced.
+Unit tests are implemented using **Vitest** and live under `tests/unit/`.
 
-## Conventions (when implemented)
+Run them with:
+
+```bash
+npm test
+```
+
+## Conventions
 
 - Prefer testing **handlers** with `fetchApiInternal` mocked or stubbed so tests do not call TronSave production or dev hosts.
 - Keep fixtures minimal and colocated with tests or under a dedicated `fixtures/` directory.
