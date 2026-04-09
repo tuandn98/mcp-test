@@ -1,0 +1,10 @@
+---
+description: MCP TronSave server — entrypoints, tool naming, build
+alwaysApply: true
+---
+# MCP server (core)
+
+- Repo này là **MCP server** dùng `@modelcontextprotocol/sdk`: transport stdio, entry `src/index.ts`, khởi tạo trong `src/server.ts`.
+- Tên server trong code: `tronsave-mcp-server` (và version) — không đổi tùy tiện nếu không có yêu cầu rõ.
+- Mỗi tool đăng ký với tên **`${TOOL_PREFIX}_${tool.name}`**; `TOOL_PREFIX` nằm trong `src/utils/constants.ts` (hiện là `tronsave`). Khi thêm tool, `name` trong `ToolDefinition` là phần sau prefix.
+- Build: `npm run build` (output `dist/`). Chạy: `npm start`. Biến môi trường `TL_MODE` (`e2e` / `prod`) dùng cho script tương ứng khi cần.

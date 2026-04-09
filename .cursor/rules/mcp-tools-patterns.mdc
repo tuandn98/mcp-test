@@ -1,0 +1,13 @@
+---
+description: Quy ước định nghĩa tool, Zod, handler, mô tả TronSave
+globs: src/tools/**/*.ts
+alwaysApply: false
+---
+
+# Tools (definitions & handlers)
+
+- Mỗi tool là `ToolDefinition`: `name`, `title`, `description`, `inputSchema` (Zod **object**), `handler`.
+- Định nghĩa nhóm internal trong `src/tools/definitions/internal/index.ts`; schema dùng chung trong `definitions/internal/schema.ts` và `definitions/shares` — ưu tiên tái sử dụng thay vì lặp field.
+- Mô tả tool (internal) dùng `withTronSaveAuth(...)` với đủ ba phần: mô tả chức năng, **khi nào gọi**, read-only / tác động phạm vi.
+- Handler trả về `ToolResponse`; dùng `ok`, `err`, `safe` từ `src/utils/response.ts` theo pattern hiện có.
+- Tool mới phải được **gộp** vào `allTools` trong `src/tools/definitions/index.ts`. Nếu thêm nhóm mới: tạo module tương tự `internal/`, export rồi spread vào `allTools`.

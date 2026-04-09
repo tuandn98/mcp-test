@@ -1,0 +1,10 @@
+---
+description: Import TypeScript — nhất quán với repo (suffix .js nơi đã dùng)
+globs: src/**/*.ts
+alwaysApply: false
+---
+
+# TypeScript imports
+
+- Project dùng `module: commonjs` và có chỗ import với suffix **`.js`** trỏ tới file `.ts` đã biên dịch (ví dụ trong `tools/definitions/index.ts`). Khi sửa hoặc thêm import trong cùng khu vực, **giữ cùng kiểu** với file lân cận.
+- Giữ `strict: true`; tránh `any` không cần thiết; khớp kiểu `ToolDefinition` / `ToolResponse` khi chạm handler.
