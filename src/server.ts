@@ -5,7 +5,7 @@ import { TOOL_PREFIX } from './utils/constants'
 export function initServer() {
     const server = new McpServer({
         name: 'tronsave-mcp-server',
-        version: '1.0.0',
+        version: '1.1.0',
     })
 
     // Register tools
