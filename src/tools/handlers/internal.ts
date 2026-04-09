@@ -1,9 +1,20 @@
-import { safe } from "../../utils/response";
+import { ok, safe } from "../../utils/response";
 import { fetchApiInternal } from "./helper";
 
 export const getInternalAccountHandler = safe(async () => {
     return fetchApiInternal('/v2/user-info', {
         method: "GET",
+    });
+});
+
+export const getDepositAddressHandler = safe(async (input: Record<string, any>) => {
+    const response = await fetchApiInternal('/v2/user-info', {
+        method: "GET",
+        query: { ...input },
+    });
+    return ok({
+        depositAddress: response.structuredContent?.depositAddress,
+        amountTrx: input.amountTrx,
     });
 });
 

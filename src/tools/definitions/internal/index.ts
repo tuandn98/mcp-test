@@ -27,20 +27,37 @@ import {
     withTronSaveAuth,
 } from "./schema";
 import { EmptyInputSchema } from "../shares";
-import { createOrderHandler, estimateBuyResourceHandler, extendRequestHandler, getExtendableDelegatesHandler, getInternalAccountHandler, getOrderBookHandler, getOrderDetailsHandler, getOrderHistoryHandler } from "../../handlers/internal";
+import { createOrderHandler, estimateBuyResourceHandler, extendRequestHandler, getDepositAddressHandler, getExtendableDelegatesHandler, getInternalAccountHandler, getOrderBookHandler, getOrderDetailsHandler, getOrderHistoryHandler } from "../../handlers/internal";
 
 export const internalTools: ToolDefinition[] = [
     {
         name: "internal_account_get",
         title: "Internal Account Information",
         description: withTronSaveAuth(
-            "Retrieve the Tronsave account profile linked to the API key: wallet address, TRX balance, and account metadata.",
+            "Retrieve the Tronsave account profile linked to the API key: wallet address, TRX balance, deposit address for deposit TRX to TronSave internal account",
             "Use when the user needs their linked address or balance.",
             "Read-only; does not submit orders or change chain state."
         ),
         inputSchema: EmptyInputSchema,
         outputSchema: getInternalAccountOutputSchema,
         handler: getInternalAccountHandler
+    },
+    {
+        name: "get_deposit_address",
+        title: "Get Deposit Address",
+        description: withTronSaveAuth(
+            "Fetches the specific deposit address for the TronSave internal account.",
+            "Trigger this tool if the user asks for a deposit address or needs to top up their TronSave TRX balance.",
+            "Constraints: 1) TRX only; 2) Minimum deposit amount is 10 TRX; 3) Read-only operation."
+        ),
+        inputSchema: z.object({
+            amountTrx: z.number().describe("Amount of TRX to deposit").min(10),
+        }),
+        outputSchema: z.object({
+            depositAddress: z.string().describe("TRON base58 deposit address, used for deposit TRX to TronSave internal account"),
+            amountTrx: z.number().describe("Amount of TRX to deposit"),
+        }),
+        handler: getDepositAddressHandler
     },
     {
         name: "internal_order_history",
