@@ -8,7 +8,10 @@
     "start": "node dist/index.js",
     "start:e2e": "TL_MODE=e2e node dist/index.js",
     "start:prod": "TL_MODE=prod node dist/index.js",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "author": "",
   "license": "ISC",
@@ -19,6 +22,8 @@
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
-    "typescript": "^5.3.0"
+    "@vitest/coverage-v8": "^3.2.4",
+    "typescript": "^5.3.0",
+    "vitest": "^3.2.4"
   }
 }

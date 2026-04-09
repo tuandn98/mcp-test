@@ -1,0 +1,19 @@
+---
+description: Enforce minimum repo structure at initialization (docs/, tasks/, CHANGELOG.md) and link to the governing standards (English).
+alwaysApply: true
+---
+
+# Project Initialization Requirements (Repo Baseline)
+
+When initializing this repository (or when bootstrapping a fresh clone), ensure the baseline structure exists:
+
+- `docs/` is present and contains the documentation index (`docs/README.md`).
+- `tasks/` is present and contains `tasks/agent-log.md`.
+- `CHANGELOG.md` is present at repository root.
+
+If any of these are missing, create them before making substantive changes.
+
+## Governing standards
+
+- Documentation rules: `.cursor/rules/docs-standard.mdc`
+- Task tracking + changelog discipline: `.cursor/rules/tasks-plans-changelog.mdc`

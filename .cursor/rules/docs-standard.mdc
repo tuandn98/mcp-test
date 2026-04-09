@@ -1,0 +1,41 @@
+---
+description: Enforce documentation standards for all files in the docs/ directory (English language and LLM-friendly structure).
+globs: docs/**/*
+---
+
+# Documentation Standards
+
+This rule applies to all files within the `docs/` directory to ensure they are highly readable for both humans and LLMs, and maintain a consistent language.
+
+## 1. Language Requirement
+- **English Only**: All documentation must be written in English.
+- Do not use languages other than English for any instructional or descriptive text within these files.
+
+## 2. LLM-Friendly Readability (LLM Easy Read)
+To ensure LLMs (like Claude, GPT, or Gemini) can parse, understand, and retrieve information from these docs efficiently, follow these structural patterns:
+
+### Structure & Hierarchy
+- **Single Title**: Use exactly one top-level `#` heading per document.
+- **Clear Headers**: Use hierarchical Markdown headers (`#`, `##`, `###`) to define structure. Never skip header levels (e.g., don't go from `#` to `###`).
+- **Flat & Explicit**: Avoid overly nested structures that make it hard to track context. Prefer **domain folders** under `docs/` (for example `api/`, `guides/`, `protocols/`, `testing/`) over dumping many unrelated files into `docs/` root. Keep depth reasonable: typically **no more than two folder levels** under `docs/` before the file (for example `docs/api/internal/account-tools.md` or `docs/testing/strategy/unit-testing.md`).
+- **Self-contained Sections**: Each section should ideally contain enough context so that a snippet of that section remains understandable in isolation.
+- **Index updates**: When adding or renaming major doc paths, update `docs/README.md` so navigation stays accurate.
+
+### Content Formatting
+- **Use Markdown Semantic Elements**:
+  - Use `**bold**` for key terms or emphasized concepts.
+  - Use `*italics*` for subtle emphasis.
+  - Use `backticks` for file names, paths, function names, variables, and technical identifiers.
+  - Use `> blockquotes` for important notes, warnings, or callouts.
+- **Lists for Enumeration**: Use bullet points (`-`) for unordered lists and numbered lists (`1.`) for sequential steps. This helps LLMs identify distinct items.
+- **Tables for Structured Data**: Use Markdown tables to represent comparisons, configurations, or mappings.
+- **Acronyms**: On first use, spell out the term and follow with the acronym in parentheses (e.g., Model Context Protocol (MCP)); use the acronym afterward.
+
+### Information Density
+- **Avoid Verbosity**: Be concise. Use direct, to-the-point language.
+- **Definition upfront**: If a document introduces a new concept or term, define it clearly at the beginning of the section.
+
+## 3. Prohibited Patterns
+- **No Ambiguous References**: Avoid saying "this part" or "the above thing". Name the artifact instead (e.g., the `auth` module, the `initializeServer` function).
+- **No Heavy Images**: Do not rely on images to convey critical information. All technical logic must be present in text or code blocks.
+- **No Code in Prose**: Never embed complex code logic directly in a sentence. Use fenced code blocks with a language tag for multi-line or syntax-heavy snippets (for example `typescript` after the opening fence). Use single backticks only for short inline identifiers.
