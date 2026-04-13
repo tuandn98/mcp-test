@@ -1,6 +1,5 @@
 import z from "zod";
 
-import { logger } from "./logger";
 import type { ToolResponse } from "../tools/definitions/definition_type";
 import { err, ok } from "./response";
 
@@ -341,49 +340,6 @@ export interface ApiFetchEnvelopeOptions<T> extends Omit<ApiFetchOptions<ApiEnve
    * Optional schema for validating the `data` field.
    */
   dataSchema?: z.ZodType<T>;
-}
-
-/**
- * Fetch an API response in the shape:
- * `{ error: boolean, message: string, data: T }`.
- */
-async function apiFetchEnvelope<T>(
-  url: string,
-  options: ApiFetchEnvelopeOptions<T> = {},
-): Promise<ApiEnvelope<T>> {
-  const envelopeSchema = z.object({
-    error: z.boolean(),
-    message: z.string(),
-    data: options.dataSchema ?? z.unknown(),
-  }) as z.ZodType<ApiEnvelope<T>>;
-
-  const envelope = await apiFetch<ApiEnvelope<T>>(url, {
-    ...options,
-    schema: envelopeSchema,
-  });
-
-  if (envelope.error) {
-    throw new ApiFetchError({
-      message: `API returned error=true for ${options.method ?? "GET"} ${url}: ${envelope.message}`,
-      url,
-      method: options.method ?? "GET",
-      requestId: options.requestId,
-      responseBody: JSON.stringify(envelope),
-    });
-  }
-
-  return envelope;
-}
-
-/**
- * Same as `apiFetchEnvelope`, but returns only the `data` field.
- */
-export async function apiFetchData<T>(
-  url: string,
-  options: ApiFetchEnvelopeOptions<T> = {},
-): Promise<T> {
-  const envelope = await apiFetchEnvelope<T>(url, options);
-  return envelope.data;
 }
 
 interface ApiClientDefaults {
