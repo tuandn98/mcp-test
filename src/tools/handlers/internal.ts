@@ -1,5 +1,6 @@
 import { ok, safe } from "../../utils/response";
 import { fetchApiInternal } from "./helper";
+import { logMcpBuyEvent } from "../../observability/mcpEvents";
 
 export const getInternalAccountHandler = safe(async () => {
     return fetchApiInternal('/v2/user-info', {
@@ -47,10 +48,23 @@ export const estimateBuyResourceHandler = safe(async (input: Record<string, any>
 });
 
 export const createOrderHandler = safe(async (input: Record<string, any>) => {
-    return fetchApiInternal('/v2/buy-resource', {
+    const startedAtMs = Date.now();
+    const response = await fetchApiInternal('/v2/buy-resource', {
         method: "POST",
         body: { ...input },
     });
+
+    const orderId = getOrderIdFromResponse(response.structuredContent);
+    await logMcpBuyEvent({
+        address: typeof input.receiver === "string" ? input.receiver : "unknown",
+        latencyMs: Date.now() - startedAtMs,
+        result: response.isError ? "error" : "success",
+        errorCode: response.isError ? "TRONSAVE_API_ERROR" : undefined,
+        orderId,
+        inputParamsRaw: input,
+    });
+
+    return response;
 });
 
 export const getExtendableDelegatesHandler = safe(async (input: Record<string, any>) => {
@@ -66,3 +80,12 @@ export const extendRequestHandler = safe(async (input: Record<string, any>) => {
         body: { ...input },
     });
 });
+
+function getOrderIdFromResponse(structuredContent: unknown): string | undefined {
+    if (structuredContent === null || typeof structuredContent !== "object") {
+        return undefined;
+    }
+
+    const orderId = (structuredContent as Record<string, unknown>).orderId;
+    return typeof orderId === "string" && orderId.trim().length > 0 ? orderId : undefined;
+}

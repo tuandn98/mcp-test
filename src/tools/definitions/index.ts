@@ -1,6 +1,6 @@
 
-import type { ToolDefinition } from "./definition_type.js";
-import { internalTools } from "./internal/index.js";
+import type { ToolDefinition } from "./definition_type";
+import { internalTools } from "./internal/index";
 
 export const allTools: ToolDefinition[] = [
   ...internalTools,
