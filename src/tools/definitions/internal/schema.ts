@@ -46,6 +46,11 @@ export const receiverRequired = z
     .min(1)
     .describe("TRON base58 address that will receive the resource.");
 
+export const tronAddressRequired = z
+    .string()
+    .min(1)
+    .describe("TRON base58 wallet address to query provider resource information.");
+
 export const requesterOptional = z
     .string()
     .optional()
@@ -176,6 +181,7 @@ export const getInternalAccountOutputSchema = z.object({
     representAddress: z.string().describe("TRON base58 represent address"),
     depositAddress: z.string().describe("TRON base58 deposit address, used for deposit TRX to TronSave internal account")
 })
+
 export const internalOrderOutputSchema = z.object({
     id: z.string().describe("TronSave order ID (hex string)"),
     requester: z.string().describe("TRON base58 address requester buy resource"),

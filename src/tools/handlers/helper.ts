@@ -28,3 +28,15 @@ export const fetchApiInternal: typeof fetchApiBase = async <T>(path: string, opt
 
   return fetchApiBase<T>(path, options);
 };
+export const fetchGraphqlApi = async (query: string, variables: Record<string, any>, headers: Record<string, string> = {}) => {
+  const URL = process.env.NETWORK === "mainnet" ? "https://api-dashboard.tronsave.io/graphql" : "https://api-dashboard-dev.tronsave.io/graphql";
+  const response = await fetch(URL, {
+    method: "POST",
+    headers: {
+      ...headers,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ query, variables }),
+  });
+  return response.json();
+};
