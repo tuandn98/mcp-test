@@ -48,6 +48,8 @@ export const getProviderInfoHandler = safe(async (input: Record<string, any>) =>
     const timestamp = Math.floor(Date.now() / 1000).toString();
     const response = await fetchGraphqlApi(USER_GET_SIGNATURE_QUERY, { privateKey: normalizedPrivateKey, message: timestamp }) as any;
     const signature = response.data?.users?.getSignature;
+    console.log({timestamp, signature});
+    
     const getProviderInfoResponse = await fetchGraphqlApi(PROVIDER_INFO_QUERY, {}, { authorization: signature }) as any;
     const providerInfo = getProviderInfoResponse;
     console.log(providerInfo);

@@ -1,4 +1,4 @@
-import { createApiFetch } from "../../utils/apiFetch";
+import { ApiFetchEnvelopeOptions, createApiFetch } from "../../utils/apiFetch";
 import { err } from "../../utils/response";
 
 const getBaseUrl = () => {
@@ -12,21 +12,35 @@ const fetchApiBase = createApiFetch({
   defaults: {
     headers: {
       apikey: process.env.TRONSAVE_API_KEY || "",
+      "x-client-source": "mcp",
+      "x-mcp-client": "mcp-stdio",
     },
   },
 });
+
+type FetchApiInternalOptions<T> = ApiFetchEnvelopeOptions<T> & {
+  toolName?: string;
+};
 
 /**
  * Proxy wrapper that validates `TRONSAVE_API_KEY` before calling TronSave API.
  * This prevents confusing 401/403 errors later in the request stack.
  */
-export const fetchApiInternal: typeof fetchApiBase = async <T>(path: string, options: any = {}) => {
+export const fetchApiInternal = async <T>(path: string, options: FetchApiInternalOptions<T> = {}) => {
   const apiKey = process.env.TRONSAVE_API_KEY;
   if (!apiKey || apiKey.trim().length === 0) {
     return err("Missing required env var: TRONSAVE_API_KEY", { path });
   }
 
-  return fetchApiBase<T>(path, options);
+  const { toolName, headers, ...restOptions } = options;
+
+  return fetchApiBase<T>(path, {
+    ...restOptions,
+    headers: {
+      ...headers,
+      ...(toolName ? { "x-mcp-tool-name": toolName } : {}),
+    },
+  });
 };
 export const fetchGraphqlApi = async (query: string, variables: Record<string, any>, headers: Record<string, string> = {}) => {
   const URL = process.env.NETWORK === "mainnet" ? "https://api-dashboard.tronsave.io/graphql" : "https://api-dashboard-dev.tronsave.io/graphql";
